@@ -11,6 +11,10 @@ dependencies = [
     "lazy-loader>=0.4",
     "typing-extensions>=4.12.2",
 ]
+classifiers = [
+    "Private :: Do Not Upload",
+    "Development Status :: 3 - Alpha",
+]
 
 [build-system]
 requires = ["hatchling"]
