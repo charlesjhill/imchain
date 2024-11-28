@@ -118,7 +118,7 @@ class Pipeline(Operator[T, U], tp.MutableSequence[Operator]):
     def __delitem__(self, idx):
         del self.operators[idx]
 
-    def __len__(self, idx):
+    def __len__(self):
         return len(self.operators)
 
     def insert(self, idx, val):

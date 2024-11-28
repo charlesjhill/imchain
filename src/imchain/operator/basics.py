@@ -6,7 +6,7 @@ from .core import Operator
 T = tp.TypeVar("T")
 U = tp.TypeVar("U")
 
-__all__ = ["Map", "Filter", "Effect", "Noop"]
+__all__ = ("Effect", "Filter", "Map", "Noop")
 
 # TODO: implement __str__ and __repr__ for everything.
 
