@@ -72,7 +72,7 @@ class Pipeline(Operator[T, U], tp.MutableSequence[Operator]):
             iterable = operator.pipe(iterable)
         yield from iterable
 
-    # ---- Support Chaining ----
+    # ---- Chaining ----
 
     def __or__(self, other: Operator):
         # self | other
@@ -105,6 +105,7 @@ class Pipeline(Operator[T, U], tp.MutableSequence[Operator]):
         return self
 
     # ---- MutableSequence ----
+
     def __getitem__(self, idx):
         operators = self.operators[idx]
         try:
