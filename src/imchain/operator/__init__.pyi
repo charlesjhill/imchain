@@ -13,7 +13,9 @@ __all__ = [
     "Slice",
     "Take",
     "UnorderedPoolMap",
+    "util",
 ]
+from . import util
 from .basics import Effect, Filter, Map, Noop
 from .core import Operator, Pipeline
 from .meta import Buffer, Chain, FlatMap
