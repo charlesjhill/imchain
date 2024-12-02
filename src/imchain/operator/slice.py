@@ -25,6 +25,9 @@ class Slice(Operator[T, T]):
     def pipe(self, iterable: tp.Iterable[T]) -> tp.Generator[T, None, None]:
         yield from itertools.islice(iterable, self.start, self.stop, self.step)
 
+        if isinstance(iterable, tp.Generator):
+            iterable.close()
+
 
 class Take(Slice[T]):
     """Operator to take the first `n`."""

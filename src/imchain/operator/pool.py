@@ -32,13 +32,13 @@ class PoolMap(Operator[T, U], tp.Generic[T, U]):
         elif callable(func):
             self.op = Map(func)
 
-        self.pool_size = os.cpu_count() if pool_size is None else pool_size
+        self.pool_size = (os.cpu_count() if pool_size is None else pool_size) or 1
         self.executor_cls = executor_cls
 
     def pipe(self, iterable: tp.Iterable[T]) -> tp.Generator[U, None, None]:
         executor = self.executor_cls(max_workers=self.pool_size)
         try:
-            self._handle(iterable, executor=executor)
+            yield from self._handle(iterable, executor=executor)
         except GeneratorExit:
             # If we get an explicit .close() call, don't wait for existing futures to complete.
             executor.shutdown(wait=False)
@@ -65,9 +65,12 @@ class PoolMap(Operator[T, U], tp.Generic[T, U]):
             while queue and queue[0].done():
                 yield queue.popleft().result()
 
+            # Filter out any elements that completed while we were iterating.
+            not_done = {f for f in not_done if not f.done()}
+
         # If we exhaust the source iterable, make to sure to yield the remaining elements.
-        for fut in queue:
-            yield fut.result()
+        while queue:
+            yield queue.popleft().result()
 
 
 class UnorderedPoolMap(PoolMap[T, U], tp.Generic[T, U]):
