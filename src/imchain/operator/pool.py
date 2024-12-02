@@ -24,7 +24,7 @@ class PoolMap(Operator[T, U], tp.Generic[T, U]):
         self,
         func: tp.Union[tp.Callable[[T], U], Operator[T, U]],
         *,
-        pool_size: int | None = None,
+        pool_size: tp.Optional[int] = None,
         executor_cls: type[cf.Executor] = cf.ProcessPoolExecutor,
     ) -> None:
         if isinstance(func, Operator):
