@@ -1,18 +1,21 @@
 __all__ = [
-    "Operator",
-    "Pipeline",
-    "Map",
-    "Filter",
-    "Effect",
-    "Noop",
     "Buffer",
     "Chain",
+    "Effect",
+    "Filter",
     "FlatMap",
+    "Map",
+    "Noop",
+    "Operator",
+    "Pipeline",
+    "PoolMap",
+    "Skip",
     "Slice",
     "Take",
-    "Skip",
+    "UnorderedPoolMap",
 ]
 from .basics import Effect, Filter, Map, Noop
 from .core import Operator, Pipeline
 from .meta import Buffer, Chain, FlatMap
+from .pool import PoolMap, UnorderedPoolMap
 from .slice import Skip, Slice, Take
