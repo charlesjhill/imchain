@@ -1,11 +1,18 @@
 import functools
 import inspect
+import logging
 
 import typing_extensions as tp
 
+logger = logging.getLogger(__name__)
+
 
 def num_required_args(f):
-    """Get the number of required arguments to `f`."""
+    """Get the number of required arguments to `f`.
+
+    Raises:
+        ValueError: If a function signature cannot be inferred from `f`.
+    """
     signature = inspect.signature(f)
 
     empty = inspect.Signature.empty
@@ -21,21 +28,28 @@ T = tp.TypeVar("T")
 U = tp.TypeVar("U")
 
 
+def _with_no_args(x, f):
+    return f()
+
+
 def zero_or_one_args(
     f: tp.Union[tp.Callable[[tp.Any], U], tp.Callable[[], U], None] = None,
 ) -> tp.Callable[[tp.Any], U]:
     """Convert a callable with 0/1 arguments into a 1 argument callable."""
     if f is None:
+        # Support @zero_or_one_args and @zero_or_one_args()
         return zero_or_one_args
 
-    num_args = num_required_args(f)
+    try:
+        num_args = num_required_args(f)
+    except ValueError:
+        # If we cannot determine the number of arguments of `f`, just return the
+        # object. Hope it's 1 argument!
+        logger.warning("Could not infer function signature from %s.", f, exc_info=True)
+        return f
+
     if num_args == 0:
-
-        @functools.wraps(f)
-        def wrapper(x):
-            return f()
-
-        return wrapper
+        return functools.partial(_with_no_args, f=f)
 
     if num_args == 1:
         return f
