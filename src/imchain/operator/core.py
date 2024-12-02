@@ -45,9 +45,32 @@ class Operator(abc.ABC, tp.Generic[T, U]):
         """Sugar around sink(self.pipe(iterable))."""
         return sink(self.pipe(iterable))
 
-    def send(self, value: T) -> U:
-        """Send a single value through the Operator."""
-        return next(self.pipe([value]))
+    def send(self, value: T) -> tp.Union[tuple[U, ...], U]:
+        """Send a single value through the Operator.
+
+        Examples:
+            >>> assert iop.Map(lambda x: x+1).send(1) == 2
+            >>> assert iop.Map(lambda x: (x, x)).send(1) == (1, 1)
+            >>> chain = iop.Map(lambda x: (x, x)) | iop.Chain()
+            >>> assert chain.send(1) == (1, 1)
+        """
+        res = self.process([value], sink=tuple)
+        if len(res) == 1:
+            return res[0]
+        return res
+
+    def send_to_tuple(self, value: T) -> tuple[U, ...]:
+        """Send a single value through the Operator and return the results as a tuple.
+
+        This method is useful for ensuring the result is always a
+
+        Examples:
+            >>> assert iop.Map(lambda x: x+1).send_to_tuple(1) == (2,)
+            >>> assert iop.Map(labmda x: (x, x)).send_to_tuple(1) == ((1, 1),)
+            >>> chain = iop.Map(lambda x: (x, x)) | iop.Chain()
+            >>> assert chain.send_to_tuple(1) == (1, 1)
+        """
+        return self.process([value], sink=tuple)
 
     def drain(self, iterable: tp.Iterable[T]) -> None:
         """Drain a given iterable through this Operator."""

@@ -38,6 +38,35 @@ def test_send():
     assert iop.Noop().send(0) == 0
     assert iop.Noop().send([5]) == [5]
 
+    adder = iop.Map(lambda x: x + 1)
+    duper = iop.Map(lambda x: (x, x))
+    chain = duper | iop.Chain()
+
+    assert adder.send(1) == 2
+    assert duper.send(1) == (1, 1)
+    assert chain.send(1) == (1, 1)
+
+
+def test_to_tuple():
+    adder = iop.Map(lambda x: x + 1)
+    duper = iop.Map(lambda x: (x, x))
+    chain = duper | iop.Chain()
+
+    assert adder.send_to_tuple(1) == (2,)
+    assert duper.send_to_tuple(1) == ((1, 1),)
+    assert chain.send_to_tuple(1) == (1, 1)
+
+
+def test_send_one_to_many():
+    class DoubleYield(iop.Operator):
+        def pipe(self, iterable):
+            for item in iterable:
+                yield item
+                yield item
+
+    yielder = DoubleYield()
+    assert yielder.send(0) == (0, 0)
+
 
 def test_chaining():
     op1 = iop.Map(lambda x: x + 1)
