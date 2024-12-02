@@ -21,7 +21,7 @@ class Operator(abc.ABC, tp.Generic[T, U]):
     - `send`: Pipes a single value through the Operator.
     - `drain`: Empties an iterable through the Operator, without capturing any results.
 
-    Operators can be chained by using the binary OR operator. For example, 
+    Operators can be chained by using the binary OR operator. For example,
     OperatorA | OperatorB produces another Operator which applies A then B.
 
     Operator[T, U] refers to an operator which
@@ -48,7 +48,7 @@ class Operator(abc.ABC, tp.Generic[T, U]):
     def send(self, value: T) -> U:
         """Send a single value through the Operator."""
         return next(self.pipe([value]))
-    
+
     def drain(self, iterable: tp.Iterable[T]) -> None:
         """Drain a given iterable through this Operator."""
         for _ in self.pipe(iterable):
@@ -124,4 +124,3 @@ class Pipeline(Operator[T, U], tp.MutableSequence[Operator]):
 
     def insert(self, idx, val):
         return self.operators.insert(idx, val)
-

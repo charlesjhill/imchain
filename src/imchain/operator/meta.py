@@ -6,11 +6,7 @@ from .core import Operator, Pipeline
 T = tp.TypeVar("T")
 U = tp.TypeVar("U")
 
-__all__ = [
-    "Buffer",
-    "Chain",
-    "FlatMap"
-]
+__all__ = ["Buffer", "Chain", "FlatMap"]
 
 # TODO: implement __str__ and __repr__ for everything.
 
@@ -67,4 +63,3 @@ def FlatMap(func: tp.Callable[[T], tp.Iterable[U]]) -> Pipeline[T, U]:
         True
     """
     return Map(func) | Chain()
-

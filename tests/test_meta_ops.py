@@ -1,4 +1,3 @@
-
 import imchain.operator as iop
 
 
@@ -24,7 +23,6 @@ def test_chain():
 
     res = chained.process(source)
     assert res == [0, 1, 2, 3]
-
 
     source = [(0, 1), ((2, 3), (4, 5))]
     res = chained.process(source)

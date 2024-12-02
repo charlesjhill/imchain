@@ -48,5 +48,6 @@ class Effect(Operator[T, T]):
 
 class Noop(Operator[T, T]):
     """A do-nothing operator for testing or dynamic replacement of other operators."""
+
     def pipe(self, iterable: tp.Iterable[T]) -> tp.Generator[T, None, None]:
         yield from iterable

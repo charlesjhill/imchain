@@ -40,8 +40,8 @@ def test_send():
 
 
 def test_chaining():
-    op1 = iop.Map(lambda x: x+1)
-    op2 = iop.Map(lambda x: 2*x)
+    op1 = iop.Map(lambda x: x + 1)
+    op2 = iop.Map(lambda x: 2 * x)
 
     # Doesn't error out.
     chained = op1 | op2
@@ -57,10 +57,10 @@ def test_chaining():
 
 
 def test_chain_3():
-    op1 = iop.Map(lambda x: x+1)
-    op2 = iop.Map(lambda x: 2*x)
-    op3 = iop.Map(lambda x: x+10)
-    op4 = iop.Map(lambda x: 3*x)
+    op1 = iop.Map(lambda x: x + 1)
+    op2 = iop.Map(lambda x: 2 * x)
+    op3 = iop.Map(lambda x: x + 10)
+    op4 = iop.Map(lambda x: 3 * x)
 
     chained = op1 | op2 | op3
     assert isinstance(chained, iop.Pipeline)
@@ -71,4 +71,4 @@ def test_chain_3():
     assert len(chained) == 4
     assert id(chained) == orig_id
 
-    assert chained.send(1) == (((1+1)*2)+10)*3
+    assert chained.send(1) == (((1 + 1) * 2) + 10) * 3

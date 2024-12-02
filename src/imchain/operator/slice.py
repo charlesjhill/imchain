@@ -16,6 +16,7 @@ __all__ = (
 
 class Slice(Operator[T, T]):
     """Operator to apply slicing to an iterable."""
+
     def __init__(self, start=None, stop=None, step=None):
         self.start = start
         self.stop = stop
@@ -27,11 +28,13 @@ class Slice(Operator[T, T]):
 
 class Take(Slice[T]):
     """Operator to take the first `n`."""
+
     def __init__(self, n: int):
         super().__init__(stop=n)
 
 
 class Skip(Slice[T]):
     """Operator to skip the first `n` elements."""
+
     def __init__(self, n: int):
         super().__init__(start=n)
