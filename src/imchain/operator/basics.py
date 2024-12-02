@@ -5,6 +5,7 @@ from .core import Operator
 
 T = tp.TypeVar("T")
 U = tp.TypeVar("U")
+V = tp.TypeVar("V")
 
 __all__ = ("Effect", "Filter", "Map", "Noop")
 
@@ -51,3 +52,49 @@ class Noop(Operator[T, T]):
 
     def pipe(self, iterable: tp.Iterable[T]) -> tp.Generator[T, None, None]:
         yield from iterable
+
+
+class Where(Operator[T, tp.Union[U, V]]):
+    """Operator to switch an operation based on the result of a predicate function.
+
+    Can be configured at init time or via a fluent interface.
+
+    Examples:
+        >>> chain = Where(lambda x: x % 2 == 0).then(lambda x: x // 2).otherwise(lambda x: 3*x+1)
+    """
+
+    def __init__(
+        self,
+        predicate: tp.Callable[[T], bool],
+        then: tp.Union[Operator[T, U], tp.Callable[[T], U], None] = None,
+        otherwise: tp.Union[Operator[T, V], tp.Callable[[T], V], None] = None,
+    ):
+        self.predicate = predicate
+        self.then(then).otherwise(otherwise)
+
+    def then(self, op: tp.Union[Operator[T, U], tp.Callable[[T], U], None]):
+        if op is None:
+            self.then_op = Noop()
+        elif callable(op):
+            self.then_op = Map(op)
+        else:
+            self.then_op = op
+
+        return self
+
+    def otherwise(self, op: tp.Union[Operator[T, V], tp.Callable[[T], V], None]):
+        if op is None:
+            self.otherwise_op = Noop()
+        elif callable(op):
+            self.otherwise_op = Map(op)
+        else:
+            self.otherwise_op = op
+
+        return self
+
+    def pipe(self, iterable: tp.Iterable[T]) -> tp.Generator[tp.Union[U, V], None, None]:
+        for elem in iterable:
+            if self.predicate(elem):
+                yield from self.then_op.send_to_tuple(elem)
+            else:
+                yield from self.otherwise_op.send_to_tuple(elem)
