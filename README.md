@@ -5,3 +5,33 @@
 # imchain
 
 `imchain` is a libary for composable stream processing, with an eye to image processing in particular.
+
+The core unit in the library is the `Operator`, which manipulate iterables. Operators can be combined together to form composable pipelines. Built-in operators are designed to be as lazy as possible to minimize memory use and wasted computation.
+
+```python
+import imchain.operator as iop
+
+chain = (
+    iop.Effect(print)
+    | iop.Map(lambda x: x**2)
+    | iop.Filter(lambda x: x % 2 == 0)
+    | iop.Effect(print)
+    | iop.Take(10)
+)
+
+for item in chain.pipe(range(100)):
+    ...
+```
+
+## Installation
+
+`pip install imchain`
+
+### Contributing
+
+`imchain` uses `uv` for dependency management. After cloning the repo, recreate the project virtual environment with development dependencies and install the pre-commit hooks:
+
+```bash
+uv sync
+uv run pre-commit install
+```
