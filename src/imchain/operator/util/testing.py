@@ -6,7 +6,7 @@ from functools import partial
 
 import typing_extensions as tp
 
-from ..basics import Effect
+from ..basics import Effect, Filter
 
 __all__ = (
     "Log",
@@ -66,3 +66,12 @@ class Log(Effect):
         if spacer:
             spacer += " "
         super().__init__(_printer(spacer))
+
+
+def _suppress(x):
+    return False
+
+
+class Suppress(Filter):
+    def __init__(self):
+        super().__init__(_suppress)

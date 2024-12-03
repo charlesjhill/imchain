@@ -61,6 +61,7 @@ class Where(Operator[T, tp.Union[U, V]]):
 
     Examples:
         >>> chain = Where(lambda x: x % 2 == 0).then(lambda x: x // 2).otherwise(lambda x: 3*x+1)
+        >>> assert chain.process([0, 1, 2, 3]) == [0, 4, 2, 10]
     """
 
     def __init__(
